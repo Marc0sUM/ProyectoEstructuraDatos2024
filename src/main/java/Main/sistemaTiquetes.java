@@ -7,7 +7,9 @@ package Main;
 /**
  *
  * @author Marcos
+ * 
  */
+//------//
 public class sistemaTiquetes {
       private NodoC primero;
     private NodoC ultimo;
