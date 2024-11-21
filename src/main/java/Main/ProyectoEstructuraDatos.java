@@ -31,5 +31,7 @@ public class ProyectoEstructuraDatos {
         }
         
         System.out.println(Caja);
+        System.out.println(Caja.encuentra(3, Caja));
+        System.out.println(Caja);
     }
 }

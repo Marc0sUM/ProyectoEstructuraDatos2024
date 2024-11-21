@@ -39,6 +39,45 @@ public class sistemaTiquetes {
         return aux;
     }
     
+    public Persona extraer(int id, sistemaTiquetes cola){
+        sistemaTiquetes colaAuxiliar = new sistemaTiquetes();
+        NodoC eliminado = null;
+        
+        while (!cola.isEmpty()) {
+            NodoC nodoActual = cola.pop();
+            if (nodoActual.getElementoP().getId() == id) {                
+                eliminado = nodoActual;                
+            } else {                
+                colaAuxiliar.push(nodoActual.getElementoP());
+            }
+        }
+        
+        while (!colaAuxiliar.isEmpty()) {
+            cola.push(colaAuxiliar.pop().getElementoP());
+        }
+        
+        return eliminado.getElementoP();
+    }
+    
+    public Persona encuentra(int id, sistemaTiquetes cola){
+        sistemaTiquetes colaAuxiliar = new sistemaTiquetes();
+        NodoC encontrado = null;
+        
+        while (!cola.isEmpty()) {
+            NodoC nodoActual = cola.pop();
+            if (nodoActual.getElementoP().getId() == id) {                
+                 encontrado = nodoActual;
+            } 
+               colaAuxiliar.push(nodoActual.getElementoP());
+        }
+        
+        while (!colaAuxiliar.isEmpty()) {
+            cola.push(colaAuxiliar.pop().getElementoP());
+        }
+        
+         return (encontrado != null) ? encontrado.getElementoP() : null;
+    }
+    
     public String toString() {
         String s = "";
         NodoC aux = primero;
