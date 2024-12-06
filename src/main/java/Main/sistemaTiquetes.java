@@ -58,7 +58,6 @@ public class sistemaTiquetes {
         
         return eliminado.getElementoP();
     }
-    
     public Persona encuentra(int id, sistemaTiquetes cola){
         sistemaTiquetes colaAuxiliar = new sistemaTiquetes();
         NodoC encontrado = null;
