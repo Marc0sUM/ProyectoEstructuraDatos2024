@@ -11,7 +11,6 @@ import java.time.LocalTime;
 import java.util.Random;
 
 public class Menu {
-
     //Variables para el funcionamiento del sistema
     Random random = new Random();
     ConfiguracionBanco configuracionBanco = new ConfiguracionBanco();
@@ -23,7 +22,6 @@ public class Menu {
     public void mostrarMenu() {
         boolean salir = false;
         try {
-
             while (!salir) {
                 String menuPrincipal = "Elige una opción:\n"
                         + "1. Cargar Datos\n"
@@ -36,11 +34,10 @@ public class Menu {
                     salir = true;
                     continue;
                 }
-
                 switch (opcion) {
                     case "1":
                         configuracionBanco.verificarConfiguracion();
-                        System.out.println(configuracionBanco.getCantCajas());
+                        System.out.println("debu" + configuracionBanco.getCantCajas());
                         break;
                     case "2":
                         mostrarSubmenu();
@@ -85,55 +82,12 @@ public class Menu {
                     case "1":
                         num = 0;
                         JOptionPane.showMessageDialog(null, "Generando Tiquetes....", "Información", JOptionPane.INFORMATION_MESSAGE);
-                        cantTiquetes = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el numero de tiquetes a generar: "));
-                        while (num != cantTiquetes) {
-                            String nombre = JOptionPane.showInputDialog("Ingrese el nombre del cliente");
-                            int id = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el id del cliente: "));
-                            int edad = Integer.parseInt(JOptionPane.showInputDialog("Ingrese la edad del cliente: "));
-                            String tramite = JOptionPane.showInputDialog("Ingrese el tramite a realizar(Deposito, Retiro, Cambio de divisas): ").toLowerCase();
-                            String tipo = JOptionPane.showInputDialog("Ingrese el tipo(P:Preferencial, A:Un solo tramite, B:Dos o mas tramites): ").toUpperCase();
-                            String horaCreacion = "" + horaActual;
-                            Persona cliente = new Persona(nombre, id, edad, tramite, tipo, horaCreacion, edad);
-                            switch (tipo) {
-                                case "P": // Caja Preferencial
-                                    configuracionBanco.getCajaPreferencial().push(cliente);
-                                    JOptionPane.showMessageDialog(null, "El cliente ha sido asignado a la Caja Preferencial.");
-                                    break;
-
-                                case "A": // Caja Rápida (Un solo trámite)
-                                    configuracionBanco.getCajaRapida().push(cliente);
-                                    JOptionPane.showMessageDialog(null, "El cliente ha sido asignado a la Caja Rápida.");
-                                    break;
-
-                                case "B": // Cajas Estándar 
-                                    System.out.println(configuracionBanco.getCantCajas());
-                                    numeroCaja = (random.nextInt(configuracionBanco.getCantCajas())); // Distribuir entre cajas estándar
-                                    System.out.println(numeroCaja + "Caja a la que se asigna la persona");
-                                    configuracionBanco.getCajaEstandar(numeroCaja).push(cliente);
-                                    JOptionPane.showMessageDialog(null, "El cliente ha sido asignado a la Caja Estándar " + (numeroCaja + 1) + ".");
-                                    break;
-
-                                default:
-                                    JOptionPane.showMessageDialog(null, "Tipo inválido. Inténtalo nuevamente.", "Error", JOptionPane.ERROR_MESSAGE);
-                                    continue; // Volver a solicitar los datos del cliente
-                            }
-                            num++;
-                        }
+                        generacionTiquetes();
                         break;
                     case "2":
-                        configuracionBanco.getCajaEstandar(numeroCaja);//Guarda la cantidad de cajas estandar en la variable
                         JOptionPane.showMessageDialog(null, "Mostrando las colas de las cajas", "Información", JOptionPane.INFORMATION_MESSAGE);
-                        JOptionPane.showMessageDialog(null, configuracionBanco.getCajaPreferencial().toString(), "Información de la Caja Preferencial", JOptionPane.INFORMATION_MESSAGE);
-                        JOptionPane.showMessageDialog(null, configuracionBanco.getCajaRapida().toString(), "Información de la Caja Rapida", JOptionPane.INFORMATION_MESSAGE);
-
-                        for (int i = 0; i <= numeroCaja; i++) {
-                            System.out.println("Numero de cajas estandar"+numeroCaja);
-                            System.out.println("Imprimiendo"+i);
-                            JOptionPane.showMessageDialog(null, configuracionBanco.getCajaEstandar(i).toString(), "Información de la Caja Estandar "+(i+1), JOptionPane.INFORMATION_MESSAGE);
-//                            JOptionPane.showMessageDialog(null, configuracionBanco.getCajaEstandar(numeroCaja).toString(), "Información de la Caja Estandar", JOptionPane.INFORMATION_MESSAGE);
-
-                        }
-//                        JOptionPane.showMessageDialog(null, configuracionBanco.getCajaEstandar(numeroCaja).toString(), "Información de la Caja", JOptionPane.INFORMATION_MESSAGE);
+                        imprimeInfoCajas();
+                        System.err.println("Caja con menos cola es"+cajaMenosCola());
                         break;
                     case "3":
                         salirSubmenu = true;
@@ -145,5 +99,69 @@ public class Menu {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Ingreso el formato incorrecto" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void generacionTiquetes() {
+        cantTiquetes = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el numero de tiquetes a generar: "));
+        while (num != cantTiquetes) {
+            String nombre = JOptionPane.showInputDialog("Ingrese el nombre del cliente");
+            int id = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el id del cliente: "));
+            int edad = Integer.parseInt(JOptionPane.showInputDialog("Ingrese la edad del cliente: "));
+            String tramite = JOptionPane.showInputDialog("Ingrese el tramite a realizar(Deposito, Retiro, Cambio de divisas): ").toLowerCase();
+            String tipo = JOptionPane.showInputDialog("Ingrese el tipo(P:Preferencial, A:Un solo tramite, B:Dos o mas tramites): ").toUpperCase();
+            String horaCreacion = "" + horaActual;
+            Persona cliente = new Persona(nombre, id, edad, tramite, tipo, horaCreacion, edad);
+            switch (tipo) {
+                case "P": // Caja Preferencial
+                    configuracionBanco.getCajaPreferencial().push(cliente);
+                    JOptionPane.showMessageDialog(null, "El cliente ha sido asignado a la Caja Preferencial.");
+                    break;
+
+                case "A": // Caja Rápida (Un solo trámite)
+                    configuracionBanco.getCajaRapida().push(cliente);
+                    JOptionPane.showMessageDialog(null, "El cliente ha sido asignado a la Caja Rápida.");
+                    break;
+
+                case "B": // Cajas Estándar 
+                    System.out.println(configuracionBanco.getCantCajas());
+//                  numeroCaja = (random.nextInt(configuracionBanco.getCantCajas())); // Distribuir entre cajas estándar
+                    System.out.println(cajaMenosCola() + "Caja a la que se asigna la persona");
+                     JOptionPane.showMessageDialog(null, "El cliente ha sido asignado a la Caja Estándar " + (cajaMenosCola()+1) + 
+                            " y tiene "+ configuracionBanco.getCajaEstandar(cajaMenosCola()).tamannoCola(configuracionBanco.getCajaEstandar(cajaMenosCola()))+
+                            " personas adelante en la fila.");
+                    configuracionBanco.getCajaEstandar(cajaMenosCola()).push(cliente);
+                   
+                    break;
+                default:
+                    JOptionPane.showMessageDialog(null, "Tipo inválido. Inténtalo nuevamente.", "Error", JOptionPane.ERROR_MESSAGE);
+                    continue; // Volver a solicitar los datos del cliente
+            }
+            num++;
+        }
+    }
+
+    private void imprimeInfoCajas() {
+        JOptionPane.showMessageDialog(null, configuracionBanco.getCajaPreferencial().toString(), "Información de la Caja Preferencial", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, configuracionBanco.getCajaRapida().toString(), "Información de la Caja Rapida", JOptionPane.INFORMATION_MESSAGE);
+
+        for (int i = 0; i < configuracionBanco.getCantCajas(); i++) {
+            System.out.println("Numero de cajas estandar" + numeroCaja);
+            System.out.println("Imprimiendo" + i);
+            JOptionPane.showMessageDialog(null, configuracionBanco.getCajaEstandar(i).toString(), "Información de la Caja Estandar " + (i + 1), JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+    private int cajaMenosCola() {
+        int menor =1000;
+         int cajaIndice=0;
+        if (configuracionBanco.getCantCajas() > 0) {
+            for (int i = 0; i < configuracionBanco.getCantCajas(); i++) {
+               int colaActual = configuracionBanco.getCajaEstandar(i).tamannoCola(configuracionBanco.getCajaEstandar(i));
+               if(colaActual < menor){
+                   menor = colaActual;
+                   cajaIndice=i;
+               }
+            }
+        }
+        return cajaIndice;
     }
 }

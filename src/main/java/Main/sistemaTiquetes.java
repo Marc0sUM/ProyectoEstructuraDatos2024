@@ -77,6 +77,21 @@ public class sistemaTiquetes {
          return (encontrado != null) ? encontrado.getElementoP() : null;
     }
     
+    public int tamannoCola(sistemaTiquetes cola){
+        sistemaTiquetes colaAuxiliar = new sistemaTiquetes();
+        int contador=0;
+        while (!cola.isEmpty()) {
+            NodoC nodoActual = cola.pop();
+            contador++;
+            colaAuxiliar.push(nodoActual.getElementoP());
+        }
+        
+        while (!colaAuxiliar.isEmpty()) {
+            cola.push(colaAuxiliar.pop().getElementoP());
+        }
+         return contador;
+    }
+    
     public String toString() {
         String s = "";
         NodoC aux = primero;

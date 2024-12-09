@@ -56,7 +56,6 @@ public class ConfiguracionBanco {
             // Lee el archivo
             while ((linea = reader.readLine()) != null) {
                 configuracion.append(linea).append("\n");
-
                 // Buscamos la parte que contiene la cantidad de cajas
                 if (linea.contains("Cantidad de Cajas:")) {
                     // Extrae la parte después del contains"
@@ -64,9 +63,7 @@ public class ConfiguracionBanco {
                     if (partes.length > 1) {
                         // Toma el valor y luego recorta
                         String cantidadCajasStr = partes[1].split(" ")[0].trim();
-
                         try {
-
                             cantCajas = Integer.parseInt(cantidadCajasStr);
                             System.err.println(cantCajas);
                             encontrado = true;
@@ -103,7 +100,6 @@ public class ConfiguracionBanco {
                 JOptionPane.showMessageDialog(null, "La cantidad de cajas no puede estar vacia", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
             try {
                 cantCajas = Integer.parseInt(cantidadCajas);
                 if (cantCajas <= 0) {
@@ -119,7 +115,7 @@ public class ConfiguracionBanco {
 
             try (PrintWriter writer = new PrintWriter(new FileWriter(archivo))) {
                 writer.print("Nombre del Banco: " + nombreBanco);
-                writer.print(" Cantidad de Cajas: " + cantCajas+2);
+                writer.print(" Cantidad de Cajas: " + cantCajas + 2);
                 writer.print(" Caja Preferencial Creada: SI ");
                 writer.print(" Caja Rapida Creada: SI ");
 
