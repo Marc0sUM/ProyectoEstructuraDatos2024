@@ -7,11 +7,12 @@ package Main;
 /**
  *
  * @author Marcos
- * 
+ *
  */
 //------//
 public class sistemaTiquetes {
-      private NodoC primero;
+
+    private NodoC primero;
     private NodoC ultimo;
 
     public boolean isEmpty() {
@@ -19,7 +20,7 @@ public class sistemaTiquetes {
     }
 
     public void push(Persona p) {
-       NodoC nuevo = new NodoC();
+        NodoC nuevo = new NodoC();
         nuevo.setElementoP(p);
         if (primero == null) {
             primero = nuevo;
@@ -29,7 +30,7 @@ public class sistemaTiquetes {
             ultimo = nuevo;
         }
     }
-    
+
     public NodoC pop() {
         NodoC aux = primero;
         if (primero != null) {
@@ -38,60 +39,57 @@ public class sistemaTiquetes {
         }
         return aux;
     }
-    
-    public Persona extraer(int id, sistemaTiquetes cola){
+
+    //Revisar cambiar estoy modificando la cola
+    public Persona extraer(int id, sistemaTiquetes cola) {
         sistemaTiquetes colaAuxiliar = new sistemaTiquetes();
         NodoC eliminado = null;
-        
+
         while (!cola.isEmpty()) {
             NodoC nodoActual = cola.pop();
-            if (nodoActual.getElementoP().getId() == id) {                
-                eliminado = nodoActual;                
-            } else {                
+            if (nodoActual.getElementoP().getId() == id) {
+                eliminado = nodoActual;
+            } else {
                 colaAuxiliar.push(nodoActual.getElementoP());
             }
         }
-        
+
         while (!colaAuxiliar.isEmpty()) {
             cola.push(colaAuxiliar.pop().getElementoP());
         }
-        
+
         return eliminado.getElementoP();
     }
-    public Persona encuentra(int id, sistemaTiquetes cola){
+
+    public Persona encuentra(int id, sistemaTiquetes cola) {
         sistemaTiquetes colaAuxiliar = new sistemaTiquetes();
         NodoC encontrado = null;
-        
+
         while (!cola.isEmpty()) {
             NodoC nodoActual = cola.pop();
-            if (nodoActual.getElementoP().getId() == id) {                
-                 encontrado = nodoActual;
-            } 
-               colaAuxiliar.push(nodoActual.getElementoP());
-        }
-        
-        while (!colaAuxiliar.isEmpty()) {
-            cola.push(colaAuxiliar.pop().getElementoP());
-        }
-        
-         return (encontrado != null) ? encontrado.getElementoP() : null;
-    }
-    
-    public int tamannoCola(sistemaTiquetes cola){
-        sistemaTiquetes colaAuxiliar = new sistemaTiquetes();
-        int contador=0;
-        while (!cola.isEmpty()) {
-            NodoC nodoActual = cola.pop();
-            contador++;
+            if (nodoActual.getElementoP().getId() == id) {
+                encontrado = nodoActual;
+            }
             colaAuxiliar.push(nodoActual.getElementoP());
         }
-        
+
         while (!colaAuxiliar.isEmpty()) {
             cola.push(colaAuxiliar.pop().getElementoP());
         }
-         return contador;
+
+        return (encontrado != null) ? encontrado.getElementoP() : null;
     }
-    
+
+    public int tamannoCola(sistemaTiquetes cola) {
+        int contador = 0;
+        NodoC actual = primero;
+        while (actual != null) {
+            contador++;
+            actual = actual.getAtras();
+        }
+        return contador;
+    }
+
     public String toString() {
         String s = "";
         NodoC aux = primero;

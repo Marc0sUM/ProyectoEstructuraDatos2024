@@ -115,7 +115,7 @@ public class ConfiguracionBanco {
 
             try (PrintWriter writer = new PrintWriter(new FileWriter(archivo))) {
                 writer.print("Nombre del Banco: " + nombreBanco);
-                writer.print(" Cantidad de Cajas: " + cantCajas + 2);
+                writer.print(" Cantidad de Cajas: " + (cantCajas));
                 writer.print(" Caja Preferencial Creada: SI ");
                 writer.print(" Caja Rapida Creada: SI ");
 
@@ -136,15 +136,15 @@ public class ConfiguracionBanco {
                 cajas[i] = new sistemaTiquetes();
                 JOptionPane.showMessageDialog(null, "Caja" + (i + 1) + " abierta");
             }
+
+            cajaPreferencial = new sistemaTiquetes();
+            JOptionPane.showMessageDialog(null, "Caja Preferencial abierta");
+
+            cajaRapida = new sistemaTiquetes();
+            JOptionPane.showMessageDialog(null, "Caja Rapida abierta");
         } else {
             JOptionPane.showMessageDialog(null, "Cantidad de Cajas no válida en el archivo de configuración.", "Error", JOptionPane.ERROR_MESSAGE);
         }
-
-        cajaPreferencial = new sistemaTiquetes();
-        JOptionPane.showMessageDialog(null, "Caja Preferencial abierta");
-
-        cajaRapida = new sistemaTiquetes();
-        JOptionPane.showMessageDialog(null, "Caja Rapida abierta");
     }
 
     public void eliminarArchivoConfiguracion() {

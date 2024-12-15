@@ -1,1 +1,1 @@
-Nombre del Banco: BCR Cantidad de Cajas: 4 Caja Preferencial Creada: SI  Caja Rapida Creada: SI 
+Nombre del Banco: BAC Cantidad de Cajas: 4 Caja Preferencial Creada: SI  Caja Rapida Creada: SI 

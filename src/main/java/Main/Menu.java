@@ -11,6 +11,7 @@ import java.time.LocalTime;
 import java.util.Random;
 
 public class Menu {
+
     //Variables para el funcionamiento del sistema
     Random random = new Random();
     ConfiguracionBanco configuracionBanco = new ConfiguracionBanco();
@@ -87,7 +88,6 @@ public class Menu {
                     case "2":
                         JOptionPane.showMessageDialog(null, "Mostrando las colas de las cajas", "Información", JOptionPane.INFORMATION_MESSAGE);
                         imprimeInfoCajas();
-                        System.err.println("Caja con menos cola es"+cajaMenosCola());
                         break;
                     case "3":
                         salirSubmenu = true;
@@ -113,24 +113,42 @@ public class Menu {
             Persona cliente = new Persona(nombre, id, edad, tramite, tipo, horaCreacion, edad);
             switch (tipo) {
                 case "P": // Caja Preferencial
-                    configuracionBanco.getCajaPreferencial().push(cliente);
                     JOptionPane.showMessageDialog(null, "El cliente ha sido asignado a la Caja Preferencial.");
+                    int filaP = configuracionBanco.getCajaPreferencial().tamannoCola(configuracionBanco.getCajaPreferencial());
+                    if(filaP ==0){
+                        JOptionPane.showMessageDialog(null, "No hay personas en la cola, sera atendido a continuacion");
+                    }else{
+                     JOptionPane.showMessageDialog(null, "Y tiene " + filaP
+                            + " personas adelante en la fila");  
+                    }
+                    configuracionBanco.getCajaPreferencial().push(cliente); 
                     break;
 
                 case "A": // Caja Rápida (Un solo trámite)
-                    configuracionBanco.getCajaRapida().push(cliente);
                     JOptionPane.showMessageDialog(null, "El cliente ha sido asignado a la Caja Rápida.");
+                    int filaR = configuracionBanco.getCajaRapida().tamannoCola(configuracionBanco.getCajaRapida());
+                    if(filaR ==0){
+                        JOptionPane.showMessageDialog(null, "No hay personas en la cola, sera atendido a continuacion");
+                    }else{
+                     JOptionPane.showMessageDialog(null, "Y tiene " + filaR
+                            + " personas adelante en la fila");   
+                    }
+                    configuracionBanco.getCajaRapida().push(cliente);
                     break;
 
                 case "B": // Cajas Estándar 
                     System.out.println(configuracionBanco.getCantCajas());
-//                  numeroCaja = (random.nextInt(configuracionBanco.getCantCajas())); // Distribuir entre cajas estándar
                     System.out.println(cajaMenosCola() + "Caja a la que se asigna la persona");
-                     JOptionPane.showMessageDialog(null, "El cliente ha sido asignado a la Caja Estándar " + (cajaMenosCola()+1) + 
-                            " y tiene "+ configuracionBanco.getCajaEstandar(cajaMenosCola()).tamannoCola(configuracionBanco.getCajaEstandar(cajaMenosCola()))+
-                            " personas adelante en la fila.");
+                    int filaE = configuracionBanco.getCajaEstandar(cajaMenosCola()).tamannoCola(configuracionBanco.getCajaEstandar(cajaMenosCola()));
+                    if(filaE ==0){
+                        JOptionPane.showMessageDialog(null, "El cliente ha sido asignado a la Caja Estándar " + (cajaMenosCola() + 1)
+                            + " y no hay personas en la cola, sera atendido a continuacion");
+                    }else{
+                     JOptionPane.showMessageDialog(null, "El cliente ha sido asignado a la Caja Estándar " + (cajaMenosCola() + 1)
+                            + " y tiene " + filaE
+                            + " personas adelante en la fila.");   
+                    }
                     configuracionBanco.getCajaEstandar(cajaMenosCola()).push(cliente);
-                   
                     break;
                 default:
                     JOptionPane.showMessageDialog(null, "Tipo inválido. Inténtalo nuevamente.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -150,16 +168,17 @@ public class Menu {
             JOptionPane.showMessageDialog(null, configuracionBanco.getCajaEstandar(i).toString(), "Información de la Caja Estandar " + (i + 1), JOptionPane.INFORMATION_MESSAGE);
         }
     }
+
     private int cajaMenosCola() {
-        int menor =1000;
-         int cajaIndice=0;
+        int menor = 1000;
+        int cajaIndice = 0;
         if (configuracionBanco.getCantCajas() > 0) {
             for (int i = 0; i < configuracionBanco.getCantCajas(); i++) {
-               int colaActual = configuracionBanco.getCajaEstandar(i).tamannoCola(configuracionBanco.getCajaEstandar(i));
-               if(colaActual < menor){
-                   menor = colaActual;
-                   cajaIndice=i;
-               }
+                int colaActual = configuracionBanco.getCajaEstandar(i).tamannoCola(configuracionBanco.getCajaEstandar(i));
+                if (colaActual < menor) {
+                    menor = colaActual;
+                    cajaIndice = i;
+                }
             }
         }
         return cajaIndice;
