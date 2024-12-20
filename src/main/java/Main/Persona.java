@@ -15,16 +15,16 @@ public class Persona {
   private String tramite;
   private String tipo;
   private String horaCreacion;
-  private int horaAtencion;
+  private String horaAtencion;
 
-    public Persona(String nombre, int id, int edad, String tramite, String tipo, String horaCreacion, int horaAtencion) {
+    public Persona(String nombre, int id, int edad, String tramite, String tipo, String horaCreacion, String horaAtencion) {
         this.nombre = nombre;
         this.id = id;
         this.edad = edad;
         this.tramite = tramite;
         this.tipo = tipo;
         this.horaCreacion = horaCreacion;
-        this.horaAtencion = -1;
+        this.horaAtencion = horaAtencion;
     }
 
     public String getNombre() {
@@ -75,11 +75,11 @@ public class Persona {
         this.horaCreacion = horaCreacion;
     }
 
-    public int getHoraAtencion() {
+    public String getHoraAtencion() {
         return horaAtencion;
     }
 
-    public void setHoraAtencion(int horaAtencion) {
+    public void setHoraAtencion(String horaAtencion) {
         this.horaAtencion = horaAtencion;
     }
 

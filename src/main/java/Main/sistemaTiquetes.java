@@ -4,12 +4,10 @@
  */
 package Main;
 
-/**
- *
- * @author Marcos
- *
- */
-//------//
+import java.time.LocalTime;
+import java.io.*;
+import java.time.format.DateTimeFormatter;
+import javax.swing.JOptionPane;
 public class sistemaTiquetes {
 
     private NodoC primero;
@@ -78,6 +76,54 @@ public class sistemaTiquetes {
         }
 
         return (encontrado != null) ? encontrado.getElementoP() : null;
+    }
+    
+    public Persona modificarHora(sistemaTiquetes cola){
+        sistemaTiquetes colaAux = new sistemaTiquetes();
+        Persona primero = null;
+        
+        while(!cola.isEmpty()){
+           NodoC nodoActual = cola.pop();
+           if(primero == null){
+               primero = nodoActual.getElementoP();
+               LocalTime horaActual = LocalTime.now();
+               String horaFormateada = horaActual.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+               primero.setHoraAtencion(horaFormateada);
+           }
+           colaAux.push(nodoActual.getElementoP());
+        }
+        while(!colaAux.isEmpty()){
+            cola.push(colaAux.pop().getElementoP());
+        }
+        return primero;
+    }
+    
+    public void guardarAtendidos(sistemaTiquetes cola, String ArchivoName){
+        sistemaTiquetes colaAux = new  sistemaTiquetes();
+        Persona primero = null;
+        
+        while(!cola.isEmpty()){
+            NodoC nodoActual = cola.pop();
+            
+            if(primero == null){
+                primero = nodoActual.getElementoP();
+            }
+            colaAux.push(nodoActual.getElementoP());
+        }
+        while(!colaAux.isEmpty()){
+            cola.push(colaAux.pop().getElementoP());
+        }
+        
+        if(primero != null){
+            try(BufferedWriter writer = new BufferedWriter(new FileWriter(ArchivoName, true))){
+                writer.write(primero.toString());
+                writer.newLine();
+            }catch(IOException e){
+                System.err.println("Error al escribir el file: "+ e.getMessage());
+            }
+        }else{
+            System.out.println("La cola esta vacia, nada por guardar");
+        }
     }
 
     public int tamannoCola(sistemaTiquetes cola) {

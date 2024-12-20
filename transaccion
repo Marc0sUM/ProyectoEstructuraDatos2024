@@ -1,0 +1,3 @@
+Persona{nombre=Uno, id=1, edad=21, tramite=deposito, tipo=P, horaCreacion=17:12:44, horaAtencion=17:13:52}
+Persona{nombre=Dos, id=2, edad=21, tramite=deposito, tipo=P, horaCreacion=17:12:44, horaAtencion=17:13:53}
+Persona{nombre=Tres, id=3, edad=31, tramite=deposito, tipo=A, horaCreacion=17:12:44, horaAtencion=17:13:57}

@@ -9,6 +9,7 @@ import java.io.*;
 import javax.swing.JOptionPane;
 import javax.swing.JOptionPane;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
 public class Menu {
@@ -16,11 +17,17 @@ public class Menu {
     //Variables para el funcionamiento del sistema
     Random random = new Random();
     ConfiguracionBanco configuracionBanco = new ConfiguracionBanco();
-    LocalTime horaActual = LocalTime.now();
+    String horaActual = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
     int cantTiquetes = 0;
     int num = 0;
     int numeroCaja;
     int cantClientesAtendidos;
+    //Lleva la cuenta de la cja que antendio mas
+    int cajaP = 0;
+    int cajaA = 0;
+    int cajaB = 0;
+    //Diferencia en segundos para el promedio
+    int diferenciaSegundos=0;
 
     public void mostrarMenu() {
         boolean salir = false;
@@ -78,7 +85,9 @@ public class Menu {
                 String submenu = "Submenú:\n"
                         + "1. Crear Tiquetes\n"
                         + "2. Muestra las Cajas y su contenido\n"
-                        + "3. Volver al menú principal";
+                        + "3. Atender las cajas\n"
+                        + "4. Reportes\n"
+                        + "5. Volver al menú principal";
                 String subOpcion = JOptionPane.showInputDialog(null, submenu, "Submenú", JOptionPane.QUESTION_MESSAGE);
 
                 if (subOpcion == null) { // Usuario presiona cancelar
@@ -96,8 +105,12 @@ public class Menu {
                         imprimeInfoCajas();
                         break;
                     case "3":
+                        atenderCajas();
                         break;
                     case "4":
+                        leerHistorial("transaccion");
+                        break;
+                    case "5":
                         salirSubmenu = true;
                         break;
                     default:
@@ -159,8 +172,8 @@ public class Menu {
                 int edad = Integer.parseInt(JOptionPane.showInputDialog("Ingrese la edad del cliente: "));
                 String tramite = JOptionPane.showInputDialog("Ingrese el tramite a realizar(Deposito, Retiro, Cambio de divisas): ").toLowerCase();
                 String tipo = JOptionPane.showInputDialog("Ingrese el tipo(P:Preferencial, A:Un solo tramite, B:Dos o mas tramites): ").toUpperCase();
-                String horaCreacion = "" + horaActual;
-                Persona cliente = new Persona(nombre, id, edad, tramite, tipo, horaCreacion, edad);
+                String horaCreacion = horaActual;
+                Persona cliente = new Persona(nombre, id, edad, tramite, tipo, horaCreacion, null);
                 switch (tipo) {
                     case "P": // Caja Preferencial
                         int filaP = configuracionBanco.getCajaPreferencial().tamannoCola(configuracionBanco.getCajaPreferencial());
@@ -250,66 +263,130 @@ public class Menu {
     }
 
     private void atenderCajaPreferencial() {
+        configuracionBanco.getCajaPreferencial().modificarHora(configuracionBanco.getCajaPreferencial());
+        configuracionBanco.getCajaPreferencial().guardarAtendidos(configuracionBanco.getCajaPreferencial(), "transaccion");
         configuracionBanco.getCajaPreferencial().pop();
         cantClientesAtendidos++;
+        JOptionPane.showMessageDialog(null, "El cliente ha sido atendido");
     }
 
     private void atenderCajaRapida() {
+        configuracionBanco.getCajaRapida().modificarHora(configuracionBanco.getCajaRapida());
+        configuracionBanco.getCajaRapida().guardarAtendidos(configuracionBanco.getCajaRapida(), "transaccion");
         configuracionBanco.getCajaRapida().pop();
         cantClientesAtendidos++;
+        JOptionPane.showMessageDialog(null, "El cliente ha sido atendido");
     }
 
     private void atenderCajaEstandar() {
         for (int i = 0; i < configuracionBanco.getCantCajas(); i++) {
             System.out.println("Numero de cajas estandar" + numeroCaja);
+            configuracionBanco.getCajaEstandar(i).modificarHora(configuracionBanco.getCajaEstandar(i));
+            configuracionBanco.getCajaEstandar(i).guardarAtendidos(configuracionBanco.getCajaEstandar(i), "transaccion");
             configuracionBanco.getCajaEstandar(i).pop();
         }
+        JOptionPane.showMessageDialog(null, "El cliente ha sido atendido");
     }
 
     private void atenderTodasCajas() {
+        configuracionBanco.getCajaPreferencial().modificarHora(configuracionBanco.getCajaPreferencial());
+        configuracionBanco.getCajaPreferencial().guardarAtendidos(configuracionBanco.getCajaPreferencial(), "transaccion");
         configuracionBanco.getCajaPreferencial().pop();
         cantClientesAtendidos++;
+        configuracionBanco.getCajaRapida().modificarHora(configuracionBanco.getCajaRapida());
+        configuracionBanco.getCajaRapida().guardarAtendidos(configuracionBanco.getCajaRapida(), "transaccion");
         configuracionBanco.getCajaRapida().pop();
         cantClientesAtendidos++;
         for (int i = 0; i < configuracionBanco.getCantCajas(); i++) {
             System.out.println("Numero de cajas estandar" + numeroCaja);
+            configuracionBanco.getCajaEstandar(i).modificarHora(configuracionBanco.getCajaEstandar(i));
+            configuracionBanco.getCajaEstandar(i).guardarAtendidos(configuracionBanco.getCajaEstandar(i), "transaccion");
             configuracionBanco.getCajaEstandar(i).pop();
             cantClientesAtendidos++;
         }
+        JOptionPane.showMessageDialog(null, "Se han atendido los clientes en todas las cajas");
     }
 
-    private void guardarCajasEnArchivo() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("cajas_info.txt", false))) {
-            // Guardar información de la Caja Preferencial
-            writer.write("Caja Preferencial:\n");
-            writer.write(configuracionBanco.getCajaPreferencial().toString() + "\n\n");
-
-            // Guardar información de la Caja Rápida
-            writer.write("Caja Rápida:\n");
-            writer.write(configuracionBanco.getCajaRapida().toString() + "\n\n");
-
-            // Guardar información de las Cajas Estándar
-            for (int i = 0; i < configuracionBanco.getCantCajas(); i++) {
-                writer.write("Caja Estándar " + (i + 1) + ":\n");
-                writer.write(configuracionBanco.getCajaEstandar(i).toString() + "\n\n");
-            }
-
-            JOptionPane.showMessageDialog(null, "Información de las cajas guardada correctamente en 'cajas_info.txt'", "Información", JOptionPane.INFORMATION_MESSAGE);
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error al guardar la información: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void leerCajasDesdeArchivo() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("cajas_info.txt"))) {
-            StringBuilder contenido = new StringBuilder();
+    public void leerHistorial(String archivoName) {
+        int cantAtendidos = 0;
+        String cajaMasAtendio="";
+        try (BufferedReader reader = new BufferedReader(new FileReader(archivoName))) {
             String linea;
             while ((linea = reader.readLine()) != null) {
-                contenido.append(linea).append("\n");
+                Persona persona = parseLinea(linea);
+                if (persona != null) {
+                    JOptionPane.showMessageDialog(null, "Lista de personas Atendidas\n"
+                            + "\nNombre: " + persona.getNombre()
+                            + "\nId: " + persona.getId()
+                            + "\nEdad: " + persona.getEdad()
+                            + "\nTramite: " + persona.getTramite()
+                            + "\nTipo: " + persona.getTipo()
+                            + "\nHora Creacion: " + persona.getHoraCreacion()
+                            + "\nHora Atencion: " + persona.getHoraAtencion()
+                    );
+                }
+                cantAtendidos++;
+                cajaMasAtendio = cajaAtendioMas(persona);
+                promedioAtencionTodas(persona);
             }
-            JOptionPane.showMessageDialog(null, contenido.toString(), "Reporte de Cajas", JOptionPane.INFORMATION_MESSAGE);
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error al leer la información: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            int promedioSegundos = diferenciaSegundos/cantAtendidos;
+            int minPromedio = (promedioSegundos % 3600)/60;
+            JOptionPane.showMessageDialog(null, "El banco a atendido a : " + cantAtendidos + " personas");
+            JOptionPane.showMessageDialog(null, "La caja que mas atendio fue : " + cajaMasAtendio );
+            JOptionPane.showMessageDialog(null, "El promedio en minutos de atencion de las cajas es : " + minPromedio+" min");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al leer el documento" + e.getMessage());
         }
     }
+
+    private Persona parseLinea(String linea) {
+        try {
+            String contenido = linea.substring(linea.indexOf("{") + 1,
+                    linea.lastIndexOf("}"));
+            String[] campos = contenido.split(",");
+
+            String nombre = campos[0].split("=")[1];
+            int id = Integer.parseInt(campos[1].split("=")[1]);
+            int edad = Integer.parseInt(campos[2].split("=")[1]);
+            String tramite = campos[3].split("=")[1];
+            String tipo = campos[4].split("=")[1];
+            String horaCreacion = campos[5].split("=")[1];
+            String horaAtencion = campos[6].split("=")[1];
+
+            return new Persona(nombre, id, edad, tramite, tipo, horaCreacion, horaAtencion);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "No se pudo parsear la info" + linea);
+            return null;
+        }
+    }
+
+    private String cajaAtendioMas(Persona persona) {
+        if (persona.getTipo().contains("P")) {
+            cajaP++;
+        } else if (persona.getTipo().contains("A")) {
+            cajaA++;
+        } else if (persona.getTipo().contains("B")) {
+            cajaB++;
+        }
+        if (cajaP >= cajaA && cajaP >= cajaB) {
+            return "Caja Preferencial";
+        } else if (cajaA >= cajaP && cajaA >= cajaB) {
+            return "Caja Rapida";
+        } else {
+            return "Cajas Estandar";
+        }
+
+    }
+    
+    private void promedioAtencionTodas(Persona persona){
+        
+        LocalTime creacion = LocalTime.parse(persona.getHoraCreacion());
+        LocalTime atencion = LocalTime.parse(persona.getHoraAtencion());
+        
+        int segundosCreacion = creacion.toSecondOfDay();
+        int segundosAtencion = atencion.toSecondOfDay();
+        
+        diferenciaSegundos += (segundosAtencion -  segundosCreacion);
+    }
+
 }
